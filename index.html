@@ -15,20 +15,881 @@
   See the License for the specific language governing permissions and
   limitations under the License
 -->
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="A portfolio template that uses Material Design Lite.">
+    <meta name="description" content="Accessibilité des besoins essentiels à Lausanne au XIXème">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-    <title>MDL-Static Website</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    <title>Lausanne Time Machine : Accessbilité des besoins essentiels</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=fr">
     <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.grey-pink.min.css" />
     <link rel="stylesheet" href="styles.css" />
-
-
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <!-- Gestion de la carte interactive -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+    integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+
+    <!-- Affichage GeoTIFF sur carte interactive via https://github.com/stuartmatthews/leaflet-geotiff -->
+    <script src="https://unpkg.com/leaflet-geotiff/leaflet-geotiff.js"></script>
+    <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/geotiff@0.4.1/dist/main.js"></script>
+    <script src="https://unpkg.com/plotty@0.2.0/src/plotty.js"></script>
+    <script src="js/leaflet-geotiff.js"></script>
+    <script src="js/leaflet-geotiff-plotty.js"></script>
+    <script src="js/leaflet-geotiff-vector.js"></script>
+    <script src="js/qgis2web_expressions.js"></script>
+    <script src="js/leaflet.js"></script>
+    <script src="js/leaflet.rotatedMarker.js"></script>
+    <script src="js/leaflet.pattern.js"></script>
+    <script src="js/leaflet-hash.js"></script>
+    <script src="js/Autolinker.min.js"></script>
+    <script src="js/rbush.min.js"></script>
+    <script src="js/labelgun.min.js"></script>
+    <script src="js/labels.js"></script>
+    
+    <!-- Shapefile layers -->
+    <script src="data/RseauBerney1832_10.js"></script>
+    <script src="data/alimentationpasquotidienne_11.js"></script>
+    <script src="data/alimentationquotidienne_12.js"></script>
+    <script src="data/artisanat_13.js"></script>
+    <script src="data/ducation_14.js"></script>
+    <script src="data/servicespasquotidiens_15.js"></script>
+    <script src="data/servicesquotidiens_16.js"></script>
+    <script src="data/textiles_17.js"></script>
+    <script src="data/pointsdeauprivate_18.js"></script>
+    <script src="data/pointsdeaupublic_19.js"></script>
+
+    <!-- Begin script for map -->
+    <script>
+
+//mise en place carte de base
+var layer;
+
+function setMap() {
+
+    
+    //INITIALIZE MAP
+    var map = L.map('map', {
+        zoomControl:true, maxZoom:28, minZoom:1
+    })
+    var hash = new L.Hash(map);
+    map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+    var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+    var bounds_group = new L.featureGroup([]);
+    
+    //SET MAP BOUNDS PER LAYER
+    function setBounds() {
+        if (bounds_group.getLayers().length) {
+            map.fitBounds(bounds_group.getBounds());
+        }
+    }
+     
+    // OSM
+    var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    });    
+    map.addLayer(osm);
+
+    // Plan Weber   
+    var img_1854_plan_Weber_modified_3 = 'data/1854_plan_Weber_modified_3.png';
+    var img_bounds_1854_plan_Weber_modified_3 = [[46.51839406598591,6.626817662899494],[46.52654812060561,6.640866024443909]];
+    var layer_Plan_Weber = new L.imageOverlay(img_1854_plan_Weber_modified_3, img_bounds_1854_plan_Weber_modified_3);
+
+    //DEFINE HEATMAP EXTENTS (CURRENTLY UNUSED)
+    <!-- var southWest = L.latLng(46.505, 6.591); -->
+    <!-- var northEast = L.latLng(46.551, 6.669); -->
+    <!-- var bounds = L.latLngBounds(southWest, northEast); -->
+     
+    //ADD ALIMENTATION PAS QUOTIDIENNE HEATMAP
+    map.createPane('pane_HeatmapAlimentationPasQuotidienne_0');
+    map.getPane('pane_HeatmapAlimentationPasQuotidienne_0').style.zIndex = 400;
+    var img_HeatmapAlimentationPasQuotidienne_0 = 'data/HeatmapAlimentationPasQuotidienne_0.png';
+    var img_bounds_HeatmapAlimentationPasQuotidienne_0 = [[46.506402665,6.599455491],[46.546273141,6.665455135]];
+    var layer_HeatmapAlimentationPasQuotidienne_0 = new L.imageOverlay(img_HeatmapAlimentationPasQuotidienne_0,
+                                          img_bounds_HeatmapAlimentationPasQuotidienne_0, {
+                                          opacity: 0.65,
+                                          pane: 'pane_HeatmapAlimentationPasQuotidienne_0'});
+    bounds_group.addLayer(layer_HeatmapAlimentationPasQuotidienne_0);
+    
+    //ADD ALIMENTATION  QUOTIDIENNE HEATMAP
+    map.createPane('pane_HeatmapAlimentationQuotidienne_1');
+    map.getPane('pane_HeatmapAlimentationQuotidienne_1').style.zIndex = 401;
+    var img_HeatmapAlimentationQuotidienne_1 = 'data/HeatmapAlimentationQuotidienne_1.png';
+    var img_bounds_HeatmapAlimentationQuotidienne_1 = [[46.506404543,6.599709712],[46.546274394,6.665638919]];
+    var layer_HeatmapAlimentationQuotidienne_1 = new L.imageOverlay(img_HeatmapAlimentationQuotidienne_1,
+                                          img_bounds_HeatmapAlimentationQuotidienne_1, {
+                                          opacity: 0.65,
+                                          pane: 'pane_HeatmapAlimentationQuotidienne_1'});
+    bounds_group.addLayer(layer_HeatmapAlimentationQuotidienne_1);
+    
+    //ADD ARTISANATS HEATMAP
+    map.createPane('pane_HeatmapArtisans_2');
+    map.getPane('pane_HeatmapArtisans_2').style.zIndex = 402;
+    var img_HeatmapArtisans_2 = 'data/HeatmapArtisans_2.png';
+    var img_bounds_HeatmapArtisans_2 = [[46.506404543,6.599709712],[46.546268785,6.664817075]];
+    var layer_HeatmapArtisans_2 = new L.imageOverlay(img_HeatmapArtisans_2,
+                                          img_bounds_HeatmapArtisans_2, {
+                                          opacity: 0.65,
+                                          pane: 'pane_HeatmapArtisans_2'});
+    bounds_group.addLayer(layer_HeatmapArtisans_2);
+    
+    //ADD EDUCATION HEATMAP
+    map.createPane('pane_HeatmapEducation_3');
+    map.getPane('pane_HeatmapEducation_3').style.zIndex = 403;
+    var img_HeatmapEducation_3 = 'data/HeatmapEducation_3.png';
+    var img_bounds_HeatmapEducation_3 = [[46.506404543,6.599713071],[46.546052387,6.664817075]];
+    var layer_HeatmapEducation_3 = new L.imageOverlay(img_HeatmapEducation_3,
+                                          img_bounds_HeatmapEducation_3, {
+                                          opacity: 0.65,
+                                          pane: 'pane_HeatmapEducation_3'});
+    bounds_group.addLayer(layer_HeatmapEducation_3);
+    
+    //ADD SERVICES PAS QUOTIDIEN HEATMAP
+    map.createPane('pane_HeatmapServicesPasQuotidien_4');
+    map.getPane('pane_HeatmapServicesPasQuotidien_4').style.zIndex = 404;
+    var img_HeatmapServicesPasQuotidien_4 = 'data/HeatmapServicesPasQuotidien_4.png';
+    var img_bounds_HeatmapServicesPasQuotidien_4 = [[46.506404543,6.599709712],[46.546277292,6.666063862]];
+    var layer_HeatmapServicesPasQuotidien_4 = new L.imageOverlay(img_HeatmapServicesPasQuotidien_4,
+                                          img_bounds_HeatmapServicesPasQuotidien_4, {
+                                          opacity: 0.65,
+                                          pane: 'pane_HeatmapServicesPasQuotidien_4'});
+    bounds_group.addLayer(layer_HeatmapServicesPasQuotidien_4);
+    
+    //ADD SERVICES QUOTIDIEN HEATMAP
+    map.createPane('pane_HeatmapServicesQuotidien_5');
+    map.getPane('pane_HeatmapServicesQuotidien_5').style.zIndex = 405;
+    var img_HeatmapServicesQuotidien_5 = 'data/HeatmapServicesQuotidien_5.png';
+    var img_bounds_HeatmapServicesQuotidien_5 = [[46.506401721,6.599341174],[46.545378953,6.661274629]];
+    var layer_HeatmapServicesQuotidien_5 = new L.imageOverlay(img_HeatmapServicesQuotidien_5,
+                                          img_bounds_HeatmapServicesQuotidien_5, {
+                                          opacity: 0.65,
+                                          pane: 'pane_HeatmapServicesQuotidien_5'});
+    bounds_group.addLayer(layer_HeatmapServicesQuotidien_5);
+    
+    //ADD TEXTILES HEATMAP
+    map.createPane('pane_HeatmapTextiles_6');
+    map.getPane('pane_HeatmapTextiles_6').style.zIndex = 406;
+    var img_HeatmapTextiles_6 = 'data/HeatmapTextiles_6.png';
+    var img_bounds_HeatmapTextiles_6 = [[46.506404543,6.599709712],[46.546277292,6.666063862]];
+    var layer_HeatmapTextiles_6 = new L.imageOverlay(img_HeatmapTextiles_6,
+                                          img_bounds_HeatmapTextiles_6, {
+                                          opacity: 0.65,
+                                          pane: 'pane_HeatmapTextiles_6'});
+    bounds_group.addLayer(layer_HeatmapTextiles_6);
+    
+    //ADD TOUS METIERS HEATMAP
+    map.createPane('pane_HeatmapTousMtiers_7');
+    map.getPane('pane_HeatmapTousMtiers_7').style.zIndex = 407;
+    var img_HeatmapTousMtiers_7 = 'data/HeatmapTousMtiers_7.png';
+    var img_bounds_HeatmapTousMtiers_7 = [[46.506401721,6.599327729],[46.546277286,6.66606303]];
+    var layer_HeatmapTousMtiers_7 = new L.imageOverlay(img_HeatmapTousMtiers_7,
+                                          img_bounds_HeatmapTousMtiers_7, {
+                                          opacity: 0.65,
+                                          pane: 'pane_HeatmapTousMtiers_7'});
+    bounds_group.addLayer(layer_HeatmapTousMtiers_7);
+    map.addLayer(layer_HeatmapTousMtiers_7);
+    
+    //ADD EAUX PRIVE HEATMAP
+    map.createPane('pane_HeatmapEauxPriv_8');
+    map.getPane('pane_HeatmapEauxPriv_8').style.zIndex = 408;
+    var img_HeatmapEauxPriv_8 = 'data/HeatmapEauxPriv_8.png';
+    var img_bounds_HeatmapEauxPriv_8 = [[46.506342445,6.591263361],[46.551437837,6.669683925]];
+    var layer_HeatmapEauxPriv_8 = new L.imageOverlay(img_HeatmapEauxPriv_8,
+                                          img_bounds_HeatmapEauxPriv_8, {
+                                          opacity: 0.65,
+                                          pane: 'pane_HeatmapEauxPriv_8'});
+    bounds_group.addLayer(layer_HeatmapEauxPriv_8);
+    
+    //ADD EAUX PUBLIC HEATMAP
+    map.createPane('pane_HeatmapEauxPublic_9');
+    map.getPane('pane_HeatmapEauxPublic_9').style.zIndex = 409;
+    var img_HeatmapEauxPublic_9 = 'data/HeatmapEauxPublic_9.png';
+    var img_bounds_HeatmapEauxPublic_9 = [[46.50511821462653,6.5912633544944095],[46.55143822428624,6.669701336374822]];
+    var layer_HeatmapEauxPublic_9 = new L.imageOverlay(img_HeatmapEauxPublic_9,
+                                          img_bounds_HeatmapEauxPublic_9, {
+                                          opacity: 0.65,
+                                          pane: 'pane_HeatmapEauxPublic_9'});
+    bounds_group.addLayer(layer_HeatmapEauxPublic_9);
+    
+    // ADD BERNEY NETWORK
+    function pop_RseauBerney1832_10(feature, layer) {
+        }
+
+    function style_RseauBerney1832_10_0() {
+        return {
+            pane: 'pane_RseauBerney1832_10',
+            opacity: 1,
+            color: 'rgba(120,120,120,1.0)',
+            dashArray: '',
+            lineCap: 'square',
+            lineJoin: 'bevel',
+            weight: 1.0,
+            fillOpacity: 0,
+            interactive: true,
+        }
+    }
+    map.createPane('pane_RseauBerney1832_10');
+    map.getPane('pane_RseauBerney1832_10').style.zIndex = 410;
+    map.getPane('pane_RseauBerney1832_10').style['mix-blend-mode'] = 'normal';
+    var layer_RseauBerney1832_10 = new L.geoJson(json_RseauBerney1832_10, {
+        attribution: '',
+        interactive: true,
+        dataVar: 'json_RseauBerney1832_10',
+        layerName: 'layer_RseauBerney1832_10',
+        pane: 'pane_RseauBerney1832_10',
+        onEachFeature: pop_RseauBerney1832_10,
+        style: style_RseauBerney1832_10_0,
+    });
+    bounds_group.addLayer(layer_RseauBerney1832_10);
+    map.addLayer(layer_RseauBerney1832_10);
+    
+    // ADD ALIMENTATION PAS QUOTIDIENNE POINTS LAYER
+    function pop_alimentationpasquotidienne_11(feature, layer) {
+        var popupContent = '<table>\
+                <tr>\
+                    <th>Layer: alimentation pas quotidienne<th>\
+                <tr>\
+                <tr>\
+                    <th scope="row">ID</th>\
+                    <td>' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Nom</th>\
+                    <td>' + (feature.properties['nom'] !== null ? autolinker.link(feature.properties['nom'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Métier</th>\
+                    <td>' + (feature.properties['metier'] !== null ? autolinker.link(feature.properties['metier'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Nom de Rue</th>\
+                    <td>' + (feature.properties['nomRue'] !== null ? autolinker.link(feature.properties['nomRue'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Numéro de Rue</th>\
+                    <td>' + (feature.properties['numRue'] !== null ? autolinker.link(feature.properties['numRue'].toLocaleString()) : '') + '</td>\
+                </tr>\
+            </table>';
+        layer.bindPopup(popupContent, {maxHeight: 400});
+    }
+
+    function style_alimentationpasquotidienne_11_0() {
+        return {
+            pane: 'pane_alimentationpasquotidienne_11',
+            radius: 4.0,
+            opacity: 1,
+            color: 'rgba(35,35,35,1.0)',
+            dashArray: '',
+            lineCap: 'butt',
+            lineJoin: 'miter',
+            weight: 1,
+            fill: true,
+            fillOpacity: 1,
+            fillColor: 'rgba(61,255,71,1.0)',
+            interactive: true,
+        }
+    }
+    map.createPane('pane_alimentationpasquotidienne_11');
+    map.getPane('pane_alimentationpasquotidienne_11').style.zIndex = 411;
+    map.getPane('pane_alimentationpasquotidienne_11').style['mix-blend-mode'] = 'normal';
+    var layer_alimentationpasquotidienne_11 = new L.geoJson(json_alimentationpasquotidienne_11, {
+        attribution: '',
+        interactive: true,
+        dataVar: 'json_alimentationpasquotidienne_11',
+        layerName: 'layer_alimentationpasquotidienne_11',
+        pane: 'pane_alimentationpasquotidienne_11',
+        onEachFeature: pop_alimentationpasquotidienne_11,
+        pointToLayer: function (feature, latlng) {
+            var context = {
+                feature: feature,
+                variables: {}
+            };
+            return L.circleMarker(latlng, style_alimentationpasquotidienne_11_0(feature));
+        },
+    });
+    bounds_group.addLayer(layer_alimentationpasquotidienne_11);
+    map.addLayer(layer_alimentationpasquotidienne_11);
+    
+    // ADD ALIMENTATION QUOTIDIENNE POINTS LAYER
+    function pop_alimentationquotidienne_12(feature, layer) {
+        var popupContent = '<table>\
+                <tr>\
+                    <th>Layer: alimentation quotidienne<th>\
+                <tr>\
+                <tr>\
+                    <th scope="row">ID</th>\
+                    <td>' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Nom</th>\
+                    <td>' + (feature.properties['nom'] !== null ? autolinker.link(feature.properties['nom'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Métier</th>\
+                    <td>' + (feature.properties['metier'] !== null ? autolinker.link(feature.properties['metier'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Nom de Rue</th>\
+                    <td>' + (feature.properties['nomRue'] !== null ? autolinker.link(feature.properties['nomRue'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Numéro de Rue</th>\
+                    <td>' + (feature.properties['numRue'] !== null ? autolinker.link(feature.properties['numRue'].toLocaleString()) : '') + '</td>\
+                </tr>\
+            </table>';
+        layer.bindPopup(popupContent, {maxHeight: 400});
+    }
+
+    function style_alimentationquotidienne_12_0() {
+        return {
+            pane: 'pane_alimentationquotidienne_12',
+            radius: 4.0,
+            opacity: 1,
+            color: 'rgba(35,35,35,1.0)',
+            dashArray: '',
+            lineCap: 'butt',
+            lineJoin: 'miter',
+            weight: 1,
+            fill: true,
+            fillOpacity: 1,
+            fillColor: 'rgba(0,172,6,1.0)',
+            interactive: true,
+        }
+    }
+    map.createPane('pane_alimentationquotidienne_12');
+    map.getPane('pane_alimentationquotidienne_12').style.zIndex = 412;
+    map.getPane('pane_alimentationquotidienne_12').style['mix-blend-mode'] = 'normal';
+    var layer_alimentationquotidienne_12 = new L.geoJson(json_alimentationquotidienne_12, {
+        attribution: '',
+        interactive: true,
+        dataVar: 'json_alimentationquotidienne_12',
+        layerName: 'layer_alimentationquotidienne_12',
+        pane: 'pane_alimentationquotidienne_12',
+        onEachFeature: pop_alimentationquotidienne_12,
+        pointToLayer: function (feature, latlng) {
+            var context = {
+                feature: feature,
+                variables: {}
+            };
+            return L.circleMarker(latlng, style_alimentationquotidienne_12_0(feature));
+        },
+    });
+    bounds_group.addLayer(layer_alimentationquotidienne_12);
+    map.addLayer(layer_alimentationquotidienne_12);
+    
+    // ADD ARTISANATS POINTS LAYER
+    function pop_artisanat_13(feature, layer) {
+        var popupContent = '<table>\
+                <tr>\
+                    <th>Layer: artisanats<th>\
+                <tr>\
+                <tr>\
+                    <th scope="row">ID</th>\
+                    <td>' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Nom</th>\
+                    <td>' + (feature.properties['nom'] !== null ? autolinker.link(feature.properties['nom'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Métier</th>\
+                    <td>' + (feature.properties['metier'] !== null ? autolinker.link(feature.properties['metier'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Nom de Rue</th>\
+                    <td>' + (feature.properties['nomRue'] !== null ? autolinker.link(feature.properties['nomRue'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Numéro de Rue</th>\
+                    <td>' + (feature.properties['numRue'] !== null ? autolinker.link(feature.properties['numRue'].toLocaleString()) : '') + '</td>\
+                </tr>\
+            </table>';
+        layer.bindPopup(popupContent, {maxHeight: 400});
+    }
+
+    function style_artisanat_13_0() {
+        return {
+            pane: 'pane_artisanat_13',
+            radius: 4.0,
+            opacity: 1,
+            color: 'rgba(35,35,35,1.0)',
+            dashArray: '',
+            lineCap: 'butt',
+            lineJoin: 'miter',
+            weight: 1,
+            fill: true,
+            fillOpacity: 1,
+            fillColor: 'rgba(243,166,178,1.0)',
+            interactive: true,
+        }
+    }
+    map.createPane('pane_artisanat_13');
+    map.getPane('pane_artisanat_13').style.zIndex = 413;
+    map.getPane('pane_artisanat_13').style['mix-blend-mode'] = 'normal';
+    var layer_artisanat_13 = new L.geoJson(json_artisanat_13, {
+        attribution: '',
+        interactive: true,
+        dataVar: 'json_artisanat_13',
+        layerName: 'layer_artisanat_13',
+        pane: 'pane_artisanat_13',
+        onEachFeature: pop_artisanat_13,
+        pointToLayer: function (feature, latlng) {
+            var context = {
+                feature: feature,
+                variables: {}
+            };
+            return L.circleMarker(latlng, style_artisanat_13_0(feature));
+        },
+    });
+    bounds_group.addLayer(layer_artisanat_13);
+    map.addLayer(layer_artisanat_13);
+    
+    // ADD EDUCATION POINTS LAYER
+    function pop_ducation_14(feature, layer) {
+        var popupContent = '<table>\
+                <tr>\
+                    <th>Layer: éducation<th>\
+                <tr>\
+                <tr>\
+                    <th scope="row">ID</th>\
+                    <td>' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Nom</th>\
+                    <td>' + (feature.properties['nom'] !== null ? autolinker.link(feature.properties['nom'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Métier</th>\
+                    <td>' + (feature.properties['metier'] !== null ? autolinker.link(feature.properties['metier'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Nom de Rue</th>\
+                    <td>' + (feature.properties['nomRue'] !== null ? autolinker.link(feature.properties['nomRue'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Numéro de Rue</th>\
+                    <td>' + (feature.properties['numRue'] !== null ? autolinker.link(feature.properties['numRue'].toLocaleString()) : '') + '</td>\
+                </tr>\
+            </table>';
+        layer.bindPopup(popupContent, {maxHeight: 400});
+    }
+
+    function style_ducation_14_0() {
+        return {
+            pane: 'pane_ducation_14',
+            radius: 4.0,
+            opacity: 1,
+            color: 'rgba(35,35,35,1.0)',
+            dashArray: '',
+            lineCap: 'butt',
+            lineJoin: 'miter',
+            weight: 1,
+            fill: true,
+            fillOpacity: 1,
+            fillColor: 'rgba(222,26,0,1.0)',
+            interactive: true,
+        }
+    }
+    map.createPane('pane_ducation_14');
+    map.getPane('pane_ducation_14').style.zIndex = 414;
+    map.getPane('pane_ducation_14').style['mix-blend-mode'] = 'normal';
+    var layer_ducation_14 = new L.geoJson(json_ducation_14, {
+        attribution: '',
+        interactive: true,
+        dataVar: 'json_ducation_14',
+        layerName: 'layer_ducation_14',
+        pane: 'pane_ducation_14',
+        onEachFeature: pop_ducation_14,
+        pointToLayer: function (feature, latlng) {
+            var context = {
+                feature: feature,
+                variables: {}
+            };
+            return L.circleMarker(latlng, style_ducation_14_0(feature));
+        },
+    });
+    bounds_group.addLayer(layer_ducation_14);
+    map.addLayer(layer_ducation_14);
+    
+    // ADD SERVICES PAS QUOTIDIENS POINTS LAYER
+    function pop_servicespasquotidiens_15(feature, layer) {
+        var popupContent = '<table>\
+                <tr>\
+                    <th>Layer: services pas quotidiens<th>\
+                <tr>\
+                <tr>\
+                    <th scope="row">ID</th>\
+                    <td>' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Nom</th>\
+                    <td>' + (feature.properties['nom'] !== null ? autolinker.link(feature.properties['nom'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Métier</th>\
+                    <td>' + (feature.properties['metier'] !== null ? autolinker.link(feature.properties['metier'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Nom de Rue</th>\
+                    <td>' + (feature.properties['nomRue'] !== null ? autolinker.link(feature.properties['nomRue'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Numéro de Rue</th>\
+                    <td>' + (feature.properties['numRue'] !== null ? autolinker.link(feature.properties['numRue'].toLocaleString()) : '') + '</td>\
+                </tr>\
+            </table>';
+        layer.bindPopup(popupContent, {maxHeight: 400});
+    }
+
+    function style_servicespasquotidiens_15_0() {
+        return {
+            pane: 'pane_servicespasquotidiens_15',
+            radius: 4.0,
+            opacity: 1,
+            color: 'rgba(35,35,35,1.0)',
+            dashArray: '',
+            lineCap: 'butt',
+            lineJoin: 'miter',
+            weight: 1,
+            fill: true,
+            fillOpacity: 1,
+            fillColor: 'rgba(255,200,1,1.0)',
+            interactive: true,
+        }
+    }
+    map.createPane('pane_servicespasquotidiens_15');
+    map.getPane('pane_servicespasquotidiens_15').style.zIndex = 415;
+    map.getPane('pane_servicespasquotidiens_15').style['mix-blend-mode'] = 'normal';
+    var layer_servicespasquotidiens_15 = new L.geoJson(json_servicespasquotidiens_15, {
+        attribution: '',
+        interactive: true,
+        dataVar: 'json_servicespasquotidiens_15',
+        layerName: 'layer_servicespasquotidiens_15',
+        pane: 'pane_servicespasquotidiens_15',
+        onEachFeature: pop_servicespasquotidiens_15,
+        pointToLayer: function (feature, latlng) {
+            var context = {
+                feature: feature,
+                variables: {}
+            };
+            return L.circleMarker(latlng, style_servicespasquotidiens_15_0(feature));
+        },
+    });
+    bounds_group.addLayer(layer_servicespasquotidiens_15);
+    map.addLayer(layer_servicespasquotidiens_15);
+    
+    // ADD SERVICES QUOTIDIENS POINTS LAYER
+    function pop_servicesquotidiens_16(feature, layer) {
+        var popupContent = '<table>\
+                <tr>\
+                    <th>Layer: services quotidiens<th>\
+                <tr>\
+                <tr>\
+                    <th scope="row">ID</th>\
+                    <td>' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Nom de Famille</th>\
+                    <td>' + (feature.properties['nom'] !== null ? autolinker.link(feature.properties['nom'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Métier</th>\
+                    <td>' + (feature.properties['metier'] !== null ? autolinker.link(feature.properties['metier'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Nom de Rue</th>\
+                    <td>' + (feature.properties['nomRue'] !== null ? autolinker.link(feature.properties['nomRue'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Numéro de Rue</th>\
+                    <td>' + (feature.properties['numRue'] !== null ? autolinker.link(feature.properties['numRue'].toLocaleString()) : '') + '</td>\
+                </tr>\
+            </table>';
+        layer.bindPopup(popupContent, {maxHeight: 400});
+    }
+
+    function style_servicesquotidiens_16_0() {
+        return {
+            pane: 'pane_servicesquotidiens_16',
+            radius: 4.0,
+            opacity: 1,
+            color: 'rgba(35,35,35,1.0)',
+            dashArray: '',
+            lineCap: 'butt',
+            lineJoin: 'miter',
+            weight: 1,
+            fill: true,
+            fillOpacity: 1,
+            fillColor: 'rgba(255,245,51,1.0)',
+            interactive: true,
+        }
+    }
+    map.createPane('pane_servicesquotidiens_16');
+    map.getPane('pane_servicesquotidiens_16').style.zIndex = 416;
+    map.getPane('pane_servicesquotidiens_16').style['mix-blend-mode'] = 'normal';
+    var layer_servicesquotidiens_16 = new L.geoJson(json_servicesquotidiens_16, {
+        attribution: '',
+        interactive: true,
+        dataVar: 'json_servicesquotidiens_16',
+        layerName: 'layer_servicesquotidiens_16',
+        pane: 'pane_servicesquotidiens_16',
+        onEachFeature: pop_servicesquotidiens_16,
+        pointToLayer: function (feature, latlng) {
+            var context = {
+                feature: feature,
+                variables: {}
+            };
+            return L.circleMarker(latlng, style_servicesquotidiens_16_0(feature));
+        },
+    });
+    bounds_group.addLayer(layer_servicesquotidiens_16);
+    map.addLayer(layer_servicesquotidiens_16);
+    
+    // ADD TEXTILES POINTS LAYER
+    function pop_textiles_17(feature, layer) {
+        var popupContent = '<table>\
+                <tr>\
+                    <th>Layer: Textiles<th>\
+                <tr>\
+                <tr>\
+                    <th scope="row">ID</th>\
+                    <td>' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Nom de Famille</th>\
+                    <td>' + (feature.properties['nom'] !== null ? autolinker.link(feature.properties['nom'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Métier</th>\
+                    <td>' + (feature.properties['metier'] !== null ? autolinker.link(feature.properties['metier'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Nom de Rue</th>\
+                    <td>' + (feature.properties['nomRue'] !== null ? autolinker.link(feature.properties['nomRue'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Numéro de Rue</th>\
+                    <td>' + (feature.properties['numRue'] !== null ? autolinker.link(feature.properties['numRue'].toLocaleString()) : '') + '</td>\
+                </tr>\
+            </table>';
+        layer.bindPopup(popupContent, {maxHeight: 400});
+    }
+
+    function style_textiles_17_0() {
+        return {
+            pane: 'pane_textiles_17',
+            radius: 4.0,
+            opacity: 1,
+            color: 'rgba(35,35,35,1.0)',
+            dashArray: '',
+            lineCap: 'butt',
+            lineJoin: 'miter',
+            weight: 1,
+            fill: true,
+            fillOpacity: 1,
+            fillColor: 'rgba(184,124,76,1.0)',
+            interactive: true,
+        }
+    }
+    map.createPane('pane_textiles_17');
+    map.getPane('pane_textiles_17').style.zIndex = 417;
+    map.getPane('pane_textiles_17').style['mix-blend-mode'] = 'normal';
+    var layer_textiles_17 = new L.geoJson(json_textiles_17, {
+        attribution: '',
+        interactive: true,
+        dataVar: 'json_textiles_17',
+        layerName: 'layer_textiles_17',
+        pane: 'pane_textiles_17',
+        onEachFeature: pop_textiles_17,
+        pointToLayer: function (feature, latlng) {
+            var context = {
+                feature: feature,
+                variables: {}
+            };
+            return L.circleMarker(latlng, style_textiles_17_0(feature));
+        },
+    });
+    bounds_group.addLayer(layer_textiles_17);
+    map.addLayer(layer_textiles_17);
+    
+    // ADD POINTS D'EAU PRIVATE POINTS LAYER
+    function pop_pointsdeauprivate_18(feature, layer) {
+        var popupContent = '<table>\
+                <tr>\
+                    <th>Layer: points d\'eau privé<th>\
+                <tr>\
+                <tr>\
+                    <th scope="row">ID</th>\
+                    <td>' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Type</th>\
+                    <td>' + (feature.properties['type'] !== null ? autolinker.link(feature.properties['type'].toLocaleString()) : '') + '</td>\
+                </tr>\
+            </table>';
+        layer.bindPopup(popupContent, {maxHeight: 400});
+    }
+
+    function style_pointsdeauprivate_18_0() {
+        return {
+            pane: 'pane_pointsdeauprivate_18',
+            radius: 4.0,
+            opacity: 1,
+            color: 'rgba(35,35,35,1.0)',
+            dashArray: '',
+            lineCap: 'butt',
+            lineJoin: 'miter',
+            weight: 1,
+            fill: true,
+            fillOpacity: 1,
+            fillColor: 'rgba(163,192,255,1.0)',
+            interactive: true,
+        }
+    }
+    map.createPane('pane_pointsdeauprivate_18');
+    map.getPane('pane_pointsdeauprivate_18').style.zIndex = 418;
+    map.getPane('pane_pointsdeauprivate_18').style['mix-blend-mode'] = 'normal';
+    var layer_pointsdeauprivate_18 = new L.geoJson(json_pointsdeauprivate_18, {
+        attribution: '',
+        interactive: true,
+        dataVar: 'json_pointsdeauprivate_18',
+        layerName: 'layer_pointsdeauprivate_18',
+        pane: 'pane_pointsdeauprivate_18',
+        onEachFeature: pop_pointsdeauprivate_18,
+        pointToLayer: function (feature, latlng) {
+            var context = {
+                feature: feature,
+                variables: {}
+            };
+            return L.circleMarker(latlng, style_pointsdeauprivate_18_0(feature));
+        },
+    });
+    bounds_group.addLayer(layer_pointsdeauprivate_18);
+    map.addLayer(layer_pointsdeauprivate_18);
+    
+    // ADD POINTS D'EAU PUBLIC POINTS LAYER
+    function pop_pointsdeaupublic_19(feature, layer) {
+        var popupContent = '<table>\
+                <tr>\
+                    <th>Layer: points d\'eau public<th>\
+                <tr>\
+                <tr>\
+                    <th scope="row">ID</th>\
+                    <td>' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                </tr>\
+                <tr>\
+                    <th scope="row">Type</th>\
+                    <td>' + (feature.properties['type'] !== null ? autolinker.link(feature.properties['type'].toLocaleString()) : '') + '</td>\
+                </tr>\
+            </table>';
+        layer.bindPopup(popupContent, {maxHeight: 400});
+    }
+
+    function style_pointsdeaupublic_19_0() {
+        return {
+            pane: 'pane_pointsdeaupublic_19',
+            radius: 4.0,
+            opacity: 1,
+            color: 'rgba(35,35,35,1.0)',
+            dashArray: '',
+            lineCap: 'butt',
+            lineJoin: 'miter',
+            weight: 1,
+            fill: true,
+            fillOpacity: 1,
+            fillColor: 'rgba(1,115,255,1.0)',
+            interactive: true,
+        }
+    }
+    map.createPane('pane_pointsdeaupublic_19');
+    map.getPane('pane_pointsdeaupublic_19').style.zIndex = 419;
+    map.getPane('pane_pointsdeaupublic_19').style['mix-blend-mode'] = 'normal';
+    var layer_pointsdeaupublic_19 = new L.geoJson(json_pointsdeaupublic_19, {
+        attribution: '',
+        interactive: true,
+        dataVar: 'json_pointsdeaupublic_19',
+        layerName: 'layer_pointsdeaupublic_19',
+        pane: 'pane_pointsdeaupublic_19',
+        onEachFeature: pop_pointsdeaupublic_19,
+        pointToLayer: function (feature, latlng) {
+            var context = {
+                feature: feature,
+                variables: {}
+            };
+            return L.circleMarker(latlng, style_pointsdeaupublic_19_0(feature));
+        },
+    });
+    bounds_group.addLayer(layer_pointsdeaupublic_19);
+    map.addLayer(layer_pointsdeaupublic_19);
+    
+    //LAYER CONTROL
+    var baseMaps = {
+        "OSM streetmap": osm,
+        "Plan Weber 1854": layer_Plan_Weber,
+    };
+    
+    var overlayMaps = {
+        '<img src="legend/pointsdeaupublic_19.png" /> points d\'eau public': layer_pointsdeaupublic_19,
+        '<img src="legend/pointsdeauprivate_18.png" /> points d\'eau private': layer_pointsdeauprivate_18,
+        '<img src="legend/textiles_17.png" /> textiles': layer_textiles_17,
+        '<img src="legend/servicesquotidiens_16.png" /> services quotidiens': layer_servicesquotidiens_16,
+        '<img src="legend/servicespasquotidiens_15.png" /> services pas quotidiens': layer_servicespasquotidiens_15,
+        '<img src="legend/ducation_14.png" /> éducation': layer_ducation_14,
+        '<img src="legend/artisanat_13.png" /> artisanat': layer_artisanat_13,
+        '<img src="legend/alimentationquotidienne_12.png" /> alimentation quotidienne': layer_alimentationquotidienne_12,
+        '<img src="legend/alimentationpasquotidienne_11.png" /> alimentation pas quotidienne': layer_alimentationpasquotidienne_11,
+        '<img src="legend/RseauBerney1832_10.png" /> Réseau Berney 1832': layer_RseauBerney1832_10,
+        "Heatmap Eaux Public": layer_HeatmapEauxPublic_9,
+        "Heatmap Eaux Privé": layer_HeatmapEauxPriv_8,
+        "Heatmap Tous Métiers": layer_HeatmapTousMtiers_7,
+        "Heatmap Textiles": layer_HeatmapTextiles_6,
+        "Heatmap Services Quotidien": layer_HeatmapServicesQuotidien_5,
+        "Heatmap Services Pas Quotidien": layer_HeatmapServicesPasQuotidien_4,
+        "Heatmap Education": layer_HeatmapEducation_3,
+        "Heatmap Artisans": layer_HeatmapArtisans_2,
+        "Heatmap Alimentation Quotidienne": layer_HeatmapAlimentationQuotidienne_1,
+        "Heatmap Alimentation Pas Quotidienne": layer_HeatmapAlimentationPasQuotidienne_0,
+    };
+    
+    L.control.layers(baseMaps,overlayMaps,).addTo(map);
+    setBounds();
+    L.ImageOverlay.include({
+        getBounds: function () {
+            return this._bounds;
+        }
+    });
+
+    //ADD HEATMAP LEGEND, we can control more with css style but i have no idea how:)
+    var legend = L.control({position: 'bottomleft'});
+
+    legend.onAdd = function (map) {
+        
+        var div = L.DomUtil.create("div","legend");
+        div.innerHTML += "<h5>Légende</h5>";
+        div.innerHTML += '<img src="images/legend.png" width="50%"/>';
+
+        return div;
+    };
+
+
+    // Set up the map
+
+    map = L.map('map', {
+        center: [46.523349, 6.632459],
+        zoom: 13
+    });
+
+
+
+}
+
+    </script>
 </head>
 
 <body>
@@ -37,152 +898,74 @@
             <div class="mdl-layout__header-row portfolio-logo-row">
                 <span class="mdl-layout__title">
                     <div class="portfolio-logo"></div>
-                    <span class="mdl-layout__title">Simple portfolio website</span>
+                    <span class="mdl-layout__title">Lausanne Time Machine : Accessibilité des besoins essentiels à Lausanne au XIXème</span>
                 </span>
             </div>
             <div class="mdl-layout__header-row portfolio-navigation-row mdl-layout--large-screen-only">
                 <nav class="mdl-navigation mdl-typography--body-1-force-preferred-font">
-                    <a class="mdl-navigation__link is-active" href="index.html">Portfolio</a>
-                    <a class="mdl-navigation__link" href="blog.html">Blog</a>
-                    <a class="mdl-navigation__link" href="about.html">About</a>
+                    <a class="mdl-navigation__link is-active" href="#carte">Carte</a>
+                    <a class="mdl-navigation__link" href="#blog">Blog</a>
+                    <a class="mdl-navigation__link" href="about.html">Initial Ideas</a>
                     <a class="mdl-navigation__link" href="contact.html">Contact</a>
                 </nav>
             </div>
         </header>
         <div class="mdl-layout__drawer mdl-layout--small-screen-only">
             <nav class="mdl-navigation mdl-typography--body-1-force-preferred-font">
-                <a class="mdl-navigation__link is-active" href="index.html">Portfolio</a>
-                <a class="mdl-navigation__link" href="blog.html">Blog</a>
-                <a class="mdl-navigation__link" href="about.html">About</a>
+                <a class="mdl-navigation__link is-active" href="#carte">Carte</a>
+                <a class="mdl-navigation__link" href="#blog">Blog</a>
+                <a class="mdl-navigation__link" href="about.html">Initial ideas</a>
                 <a class="mdl-navigation__link" href="contact.html">Contact</a>
             </nav>
         </div>
         <main class="mdl-layout__content">
-            <div class="mdl-grid portfolio-max-width">
-                <div class="mdl-cell mdl-card mdl-shadow--4dp portfolio-card">
-                    <div class="mdl-card__media">
-                        <img class="article-image" src=" images/example-work01.jpg" border="0" alt="">
-                    </div>
+            <div class="mdl-grid portfolio-max-width" id="carte">
+                <div class="mdl-cell mdl-cell--12-col mdl-card mdl-shadow--4dp">
                     <div class="mdl-card__title">
-                        <h2 class="mdl-card__title-text">Blog template</h2>
+                        <h2 class="mdl-card__title-text">Carte</h2>
+                    </div>
+                    <div class="mdl-card__media">
+                        <div class="article-image" id="map" style="height: 600px;"></div>
+                        <script>
+                            setMap();
+                        </script>
+                        <!--<img class="article-image" src=" images/carte_lausanne.png" border="0" alt="">-->
                     </div>
                     <div class="mdl-card__supporting-text">
-                        Enim labore aliqua consequat ut quis ad occaecat aliquip incididunt. Sunt nulla eu enim irure enim nostrud aliqua consectetur ad consectetur sunt ullamco officia. Ex officia laborum et consequat duis.
+                        <strong>Magnifique carte de Lausanne</strong>
+                        <span>Qui correspond bien à l'époque, avec un aéroport et des autoroutes</span>
                     </div>
-                    <div class="mdl-card__actions mdl-card--border">
-                        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-button--accent" href="template_init.html">Read more</a>
-                    </div>
-                </div>
-                <div class="mdl-cell mdl-card mdl-shadow--4dp portfolio-card">
-                    <div class="mdl-card__media">
-                        <img class="article-image" src=" images/example-work07.jpg" border="0" alt="">
-                    </div>
-                    <div class="mdl-card__title">
-                        <h2 class="mdl-card__title-text">Sunt nulla</h2>
-                    </div>
-                    <div class="mdl-card__supporting-text">
-                        Enim labore aliqua consequat ut quis ad occaecat aliquip incididunt. Sunt nulla eu enim irure enim nostrud aliqua consectetur ad consectetur sunt ullamco officia. Ex officia laborum et consequat duis.
-                    </div>
-                    <div class="mdl-card__actions mdl-card--border">
-                        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-button--accent" href="template_init.html">Read more</a>
-                    </div>
-                </div>
-                <div class="mdl-cell mdl-card mdl-shadow--4dp portfolio-card">
-                    <div class="mdl-card__media">
-                        <img class="article-image" src=" images/example-work02.jpg" border="0" alt="">
-                    </div>
-                    <div class="mdl-card__title">
-                        <h2 class="mdl-card__title-text">Android.com website</h2>
-                    </div>
-                    <div class="mdl-card__supporting-text">
-                        Enim labore aliqua consequat ut quis ad occaecat aliquip incididunt. Sunt nulla eu enim irure enim nostrud aliqua consectetur ad consectetur sunt ullamco officia. Ex officia laborum et consequat duis.
-                    </div>
-                    <div class="mdl-card__actions mdl-card--border">
-                        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-button--accent" href="template_init.html">Read more</a>
-                    </div>
-                </div>
-                <div class="mdl-cell mdl-card mdl-shadow--4dp portfolio-card">
-                    <div class="mdl-card__media">
-                        <img class="article-image" src=" images/example-work03.jpg" border="0" alt="">
-                    </div>
-                    <div class="mdl-card__title">
-                        <h2 class="mdl-card__title-text">Dashboard template</h2>
-                    </div>
-                    <div class="mdl-card__supporting-text">
-                        Enim labore aliqua consequat ut quis ad occaecat aliquip incididunt. Sunt nulla eu enim irure enim nostrud aliqua consectetur ad consectetur sunt ullamco officia. Ex officia laborum et consequat duis.
-                    </div>
-                    <div class="mdl-card__actions mdl-card--border">
-                        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-button--accent" href="template_init.html">Read more</a>
-                    </div>
-                </div>
-                <div class="mdl-cell mdl-card mdl-shadow--4dp portfolio-card">
-                    <div class="mdl-card__media">
-                        <img class="article-image" src=" images/example-work04.jpg" border="0" alt="">
-                    </div>
-                    <div class="mdl-card__title">
-                        <h2 class="mdl-card__title-text">Text-heavy website</h2>
-                    </div>
-                    <div class="mdl-card__supporting-text">
-                        Enim labore aliqua consequat ut quis ad occaecat aliquip incididunt. Sunt nulla eu enim irure enim nostrud aliqua consectetur ad consectetur sunt ullamco officia. Ex officia laborum et consequat duis.
-                    </div>
-                    <div class="mdl-card__actions mdl-card--border">
-                        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-button--accent" href="template_init.html">Read more</a>
-                    </div>
-                </div>
-                <div class="mdl-cell mdl-card mdl-shadow--4dp portfolio-card">
-                    <div class="mdl-card__media">
-                        <img class="article-image" src=" images/example-work08.jpg" border="0" alt="">
-                    </div>
-                    <div class="mdl-card__title">
-                        <h2 class="mdl-card__title-text">Ex officia laborum</h2>
-                    </div>
-                    <div class="mdl-card__supporting-text">
-                        Enim labore aliqua consequat ut quis ad occaecat aliquip incididunt. Sunt nulla eu enim irure enim nostrud aliqua consectetur ad consectetur sunt ullamco officia. Ex officia laborum et consequat duis.
-                    </div>
-                    <div class="mdl-card__actions mdl-card--border">
-                        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-button--accent" href="template_init.html">Read more</a>
-                    </div>
-                </div>
-                <div class="mdl-cell mdl-card mdl-shadow--4dp portfolio-card">
-                    <div class="mdl-card__media">
-                        <img class="article-image" src=" images/example-work05.jpg" border="0" alt="">
-                    </div>
-                    <div class="mdl-card__title">
-                        <h2 class="mdl-card__title-text">Stand-alone article</h2>
-                    </div>
-                    <div class="mdl-card__supporting-text">
-                        Enim labore aliqua consequat ut quis ad occaecat aliquip incididunt. Sunt nulla eu enim irure enim nostrud aliqua consectetur ad consectetur sunt ullamco officia. Ex officia laborum et consequat duis.
-                    </div>
-                    <div class="mdl-card__actions mdl-card--border">
-                        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-button--accent" href="template_init.html">Read more</a>
-                    </div>
-                </div>
-                <div class="mdl-cell mdl-card mdl-shadow--4dp portfolio-card">
-                    <div class="mdl-card__media">
-                        <img class="article-image" src=" images/example-work06.jpg" border="0" alt="">
-                    </div>
-                    <div class="mdl-card__title">
-                        <h2 class="mdl-card__title-text">MDL website</h2>
-                    </div>
-                    <div class="mdl-card__supporting-text">
-                        Enim labore aliqua consequat ut quis ad occaecat aliquip incididunt. Sunt nulla eu enim irure enim nostrud aliqua consectetur ad consectetur sunt ullamco officia. Ex officia laborum et consequat duis.
-                    </div>
-                    <div class="mdl-card__actions mdl-card--border">
-                        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-button--accent" href="template_init.html">Read more</a>
-                    </div>
-                </div>
-                <div class="mdl-cell mdl-card mdl-shadow--4dp portfolio-card">
-                    <div class="mdl-card__media">
-                        <img class="article-image" src=" images/example-work09.jpg" border="0" alt="">
-                    </div>
-                    <div class="mdl-card__title">
-                        <h2 class="mdl-card__title-text">Consequat ut quis</h2>
-                    </div>
-                    <div class="mdl-card__supporting-text">
-                        Enim labore aliqua consequat ut quis ad occaecat aliquip incididunt. Sunt nulla eu enim irure enim nostrud aliqua consectetur ad consectetur sunt ullamco officia. Ex officia laborum et consequat duis.
-                    </div>
-                    <div class="mdl-card__actions mdl-card--border">
-                        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-button--accent" href="template_init.html">Read more</a>
+                    <div class="mdl-grid portfolio-copy" id="blog">
+                        <h3 class="mdl-cell mdl-cell--12-col mdl-typography--headline">Blog</h3>
+                        <div class="mdl-cell mdl-cell--6-col mdl-card__supporting-text no-padding">
+                            <p>
+                                Excepteur reprehenderit sint exercitation ipsum consequat qui sit id velit elit. Velit anim eiusmod labore sit amet. Voluptate voluptate irure occaecat deserunt incididunt esse in. Sunt velit aliquip sunt elit ex nulla reprehenderit qui ut eiusmod ipsum do. Duis veniam reprehenderit laborum occaecat id proident nulla veniam. Duis enim deserunt voluptate aute veniam sint pariatur exercitation. Irure mollit est sit labore est deserunt pariatur duis aute laboris cupidatat. Consectetur consequat esse est sit veniam adipisicing ipsum enim irure.
+                            </p>
+                        </div>
+                        <div class="mdl-cell mdl-cell--6-col">
+                            <img class="article-image" src=" images/portfolio-example-02.jpg" border="0" alt="">
+                        </div>
+                        <h3 class="mdl-cell mdl-cell--12-col mdl-typography--headline">Initial Ideas</h3>
+                        <div class="mdl-cell mdl-cell--6-col">
+                            <img class="article-image" src=" images/portfolio-example-03.jpg" border="0" alt="">
+                        </div>
+                        <div class="mdl-cell mdl-cell--6-col mdl-card__supporting-text no-padding ">
+                            <p>
+                                Excepteur reprehenderit sint exercitation ipsum consequat qui sit id velit elit. Velit anim eiusmod labore sit amet. Voluptate voluptate irure occaecat deserunt incididunt esse in. Sunt velit aliquip sunt elit ex nulla reprehenderit qui ut eiusmod ipsum do. Duis veniam reprehenderit laborum occaecat id proident nulla veniam. Duis enim deserunt voluptate aute veniam sint pariatur exercitation. Irure mollit est sit labore est deserunt pariatur duis aute laboris cupidatat. Consectetur consequat esse est sit veniam adipisicing ipsum enim irure.
+                            </p>
+                        </div>
+                        <h3 class="mdl-cell mdl-cell--12-col mdl-typography--headline">Final Concept</h3>
+                        <div class="mdl-cell mdl-cell--6-col">
+                            <img class="article-image" src=" images/portfolio-example-05.jpg" border="0" alt="">
+                        </div>
+                        <div class="mdl-cell mdl-cell--6-col">
+                            <img class="article-image" src=" images/portfolio-example-06.jpg" border="0" alt="">
+                        </div>
+                        <div class="mdl-cell mdl-cell--8-col mdl-card__supporting-text no-padding ">
+                            <p>
+                                Excepteur reprehenderit sint exercitation ipsum consequat qui sit id velit elit. Velit anim eiusmod labore sit amet. Voluptate voluptate irure occaecat deserunt incididunt esse in. Sunt velit aliquip sunt elit ex nulla reprehenderit qui ut eiusmod ipsum do. Duis veniam reprehenderit laborum occaecat id proident nulla veniam. Duis enim deserunt voluptate aute veniam sint pariatur exercitation. Irure mollit est sit labore est deserunt pariatur duis aute laboris cupidatat. Consectetur consequat esse est sit veniam adipisicing ipsum enim irure.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
