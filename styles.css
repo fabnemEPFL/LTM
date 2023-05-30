@@ -178,3 +178,10 @@ footer {
   background-size: cover;
 }
 
+p {
+  text-align: justify;
+}
+
+em {
+  font-weight: bold;
+}

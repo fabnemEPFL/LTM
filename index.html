@@ -904,18 +904,20 @@ function setMap() {
             <div class="mdl-layout__header-row portfolio-navigation-row mdl-layout--large-screen-only">
                 <nav class="mdl-navigation mdl-typography--body-1-force-preferred-font">
                     <a class="mdl-navigation__link is-active" href="#carte">Carte</a>
-                    <a class="mdl-navigation__link" href="#blog">Blog</a>
-                    <a class="mdl-navigation__link" href="about.html">Initial Ideas</a>
-                    <a class="mdl-navigation__link" href="contact.html">Contact</a>
+                    <a class="mdl-navigation__link" href="#intro">Introduction</a>
+                    <a class="mdl-navigation__link" href="#data">Les données</a>
+                    <a class="mdl-navigation__link" href="#carto">Cartographie</a>
+                    <a class="mdl-navigation__link" href="#team">L'Équipe</a>
                 </nav>
             </div>
         </header>
         <div class="mdl-layout__drawer mdl-layout--small-screen-only">
             <nav class="mdl-navigation mdl-typography--body-1-force-preferred-font">
                 <a class="mdl-navigation__link is-active" href="#carte">Carte</a>
-                <a class="mdl-navigation__link" href="#blog">Blog</a>
-                <a class="mdl-navigation__link" href="about.html">Initial ideas</a>
-                <a class="mdl-navigation__link" href="contact.html">Contact</a>
+                <a class="mdl-navigation__link" href="#intro">Introduction</a>
+                <a class="mdl-navigation__link" href="#data">Les données</a>
+                <a class="mdl-navigation__link" href="#carto">Cartographie</a>
+                <a class="mdl-navigation__link" href="#team">L'Équipe</a>
             </nav>
         </div>
         <main class="mdl-layout__content">
@@ -932,38 +934,117 @@ function setMap() {
                         <!--<img class="article-image" src=" images/carte_lausanne.png" border="0" alt="">-->
                     </div>
                     <div class="mdl-card__supporting-text">
-                        <strong>Magnifique carte de Lausanne</strong>
+                        <strong>Carte de Lausanne</strong>
                         <span>Qui correspond bien à l'époque, avec un aéroport et des autoroutes</span>
                     </div>
-                    <div class="mdl-grid portfolio-copy" id="blog">
-                        <h3 class="mdl-cell mdl-cell--12-col mdl-typography--headline">Blog</h3>
-                        <div class="mdl-cell mdl-cell--6-col mdl-card__supporting-text no-padding">
+                    <div class="mdl-grid portfolio-copy">
+                        <h3 class="mdl-cell mdl-cell--12-col mdl-typography--headline" id="intro">Introduction</h3>
+                        <div class="mdl-cell mdl-cell--12-col mdl-card__supporting-text no-padding">
                             <p>
-                                Excepteur reprehenderit sint exercitation ipsum consequat qui sit id velit elit. Velit anim eiusmod labore sit amet. Voluptate voluptate irure occaecat deserunt incididunt esse in. Sunt velit aliquip sunt elit ex nulla reprehenderit qui ut eiusmod ipsum do. Duis veniam reprehenderit laborum occaecat id proident nulla veniam. Duis enim deserunt voluptate aute veniam sint pariatur exercitation. Irure mollit est sit labore est deserunt pariatur duis aute laboris cupidatat. Consectetur consequat esse est sit veniam adipisicing ipsum enim irure.
+                                &nbsp; &nbsp; Le projet <em>Lausanne Time Machine</em> propose un certain nombre de jeu de données (cartes, registres, photographies, écrits) décrivant la ville de Lausanne au milieu du XIXe siècle. Notre première idée à partir de ces jeux de données a été de caractériser l'ambiance de la ville, tant la vie quotidienne que ses habitants. Avec notre intérêt pour les systèmes urbains et les inégalités sociales, nous nous sommes posés la problématique :
+                                <br/>
+                                <em>“Quelle était l'accessibilité des besoins essentiels quotidiens de Lausanne au XIXe siècle ?”</em>
+                            </p>
+                            <p>
+                                &nbsp; &nbsp; A priori, c'est une question assez simple, mais en y réfléchissant de plus près, on constate qu'elle est plus complexe qu'il n'y paraît. À l'époque, tous les déplacements se faisaient à pied, sauf lorsque la distance devait grande au point de préférer le cheval. Ces déplacements à pied étaient rendus plus difficiles par le relief vallonné de Lausanne, qui présente un dénivelé de 200 mètres entre le lac et la cathédrale. Par ailleurs, nous savons que les points d'eau, notamment les fontaines, jouaient un rôle social très important à l'époque. Souvent situés sur les places publiques, ils servaient de lieux de rencontre où les habitants pouvaient faire leurs courses, discuter librement et bien sûr se désaltérer (malgré la mauvaise qualité du Flon).
+                            </p>
+                            <p>
+                                &nbsp; &nbsp; Pour mettre en évidence les lieux de forte activité, affluence et desserte, nous avons choisi de cartographier la “marchabilité” vers les services essentiels tels que les points d'eau, les bouchers, les épiceries, les marchands, etc. dans tout Lausanne. Il nous a donc fallu trouver, dans les jeux de données fournis, la localisation des points d'eaux ainsi que ceux des corps de métiers du quotidien de Lausanne. La "marchabilité" désigne le temps de marche pour aller 
+                                d'un point dans Lausanne à un service, en tenant compte du relief, qui rend le trajet plus long.
                             </p>
                         </div>
-                        <div class="mdl-cell mdl-cell--6-col">
-                            <img class="article-image" src=" images/portfolio-example-02.jpg" border="0" alt="">
+                        <div class="mdl-cell mdl-cell--12-col">
+                            <img class="article-image" src="images/Berney_Source.png" border="0" alt="">
                         </div>
-                        <h3 class="mdl-cell mdl-cell--12-col mdl-typography--headline">Initial Ideas</h3>
-                        <div class="mdl-cell mdl-cell--6-col">
-                            <img class="article-image" src=" images/portfolio-example-03.jpg" border="0" alt="">
-                        </div>
-                        <div class="mdl-cell mdl-cell--6-col mdl-card__supporting-text no-padding ">
+
+                        <h3 class="mdl-cell mdl-cell--12-col mdl-typography--headline" id="data">Les données</h3>
+                        <h4 class="mdl-cell mdl-cell--12-col mdl-typography--body-1-force-preferred-font">Données initiales</h4>
+                        <div class="mdl-cell mdl-cell--12-col mdl-card__supporting-text no-padding ">
                             <p>
-                                Excepteur reprehenderit sint exercitation ipsum consequat qui sit id velit elit. Velit anim eiusmod labore sit amet. Voluptate voluptate irure occaecat deserunt incididunt esse in. Sunt velit aliquip sunt elit ex nulla reprehenderit qui ut eiusmod ipsum do. Duis veniam reprehenderit laborum occaecat id proident nulla veniam. Duis enim deserunt voluptate aute veniam sint pariatur exercitation. Irure mollit est sit labore est deserunt pariatur duis aute laboris cupidatat. Consectetur consequat esse est sit veniam adipisicing ipsum enim irure.
+                                &nbsp; &nbsp; La base de données disponible contient plusieurs sources primaires sur la ville de Lausanne telle qu'elle était au XIXᵉ siècle. Les sources les plus pertinentes pour répondre à notre question sont notamment : le Cadastre Berney de 1832, l'Almanach de commerce Vaudois de la même année et le Plan Weber de 1854. Le Cadastre Berney a été utilisé comme source principale pour la morphologie de la ville de Lausanne de XIXᵉ siècle, car le réseau routier ainsi que les bâtiments étaient déjà disponibles en format vectorisé, facile à exploiter par traitement numérique.
+                            </p>
+                            <p>
+                                &nbsp; &nbsp; Cependant, vu que ce cadastre ne permet pas d'extraire facilement les adresses de l'époque, il fallait utiliser une deuxième source pour déduire leurs emplacements GPS. Nous avons donc utilisé le Plan Weber, vectorisé lui aussi, qui contient des informations détaillées sur l'emplacement précis des adresses spécifiques. Enfin, afin de localiser les métiers pertinents, nous avons repris l'Almanach du commerce de 1832, qui lui n'était disponible que sous forme d'un scan PDF.
                             </p>
                         </div>
-                        <h3 class="mdl-cell mdl-cell--12-col mdl-typography--headline">Final Concept</h3>
+                        <div class="mdl-cell mdl-cell--12-col">
+                            <img class="article-image" src="images/Almanach_Source.png" border="0" alt="">
+                        </div>
+
+                        <h4 class="mdl-cell mdl-cell--12-col mdl-typography--body-1-force-preferred-font">Logiciels pour traitement des données, données supplémentaires</h4>
+                        <div class="mdl-cell mdl-cell--12-col mdl-card__supporting-text no-padding ">
+                            <ul>
+                                <li>
+                                    Python : océrisation de l'Almanach de commerce, la correspondance de l'adresse d'époque avec les coordonnées GPS, le classement des métiers, la mise en carte des métiers à leur propre adresse
+                                </li>
+                                <li>
+                                    spaCy : Natural Language Processing pour catégoriser les métiers selon leur similarité sémantique
+                                </li>
+                                <li>
+                                    QGIS : analyse du réseau routier et topographique et son plugin QNEAT3 pour l'analyse du réseau routier et faire les isochrones
+                                </li>
+                            </ul>
+                            <p>
+                                &nbsp; &nbsp; Nous avons utilisé pour la plupart de cette analyse le logiciel QGIS, un logiciel open-source permettant de travailler sur des cartes, notamment pour nous le Cadastre Berney. Surtout pour les analyses de réseau routier, QGIS a une fonctionnalité pratique, avec le plugin “QNEAT3” pour effectuer notre analyse de "marchabilité". Les algorithmes dits “isochrones” nous permettent de calculer la "marchabilité" y compris hors des routes, en interpolant, ainsi que de générer les couches rasters qui interprètent un champ pour accommoder pour les différentes vitesses de marche. 
+                            </p>
+                        </div>
+                        <div class="mdl-cell mdl-cell--12-col">
+                            <img class="article-image" src="images/Methodo-Georef.png" border="0" alt="">
+                        </div>
+
+                        <h4 class="mdl-cell mdl-cell--12-col mdl-typography--body-1-force-preferred-font">Logiciels pour traitement des données, données supplémentaires</h4>
+                        <div class="mdl-cell mdl-cell--12-col mdl-card__supporting-text no-padding ">
+                            <p>
+                                &nbsp; &nbsp; Notre travail s'est fait en trois parties principales, détaillées dans les sections suivantes. La première consiste à transformer l 'Almanach en un format utilisable pour traitement numérique, afin d'extraire ses informations et les utiliser pour nos cartes. La deuxième partie consiste à classer tous les métiers de l 'Almanach dans des groupes de métiers similaires. Enfin, la dernière partie consiste à effectuer une analyse du réseau routier dans le but de calculer la "marchabilité" pour chaque catégorie de métiers ainsi que des points d 'eau.
+                            </p>
+                        </div>
+
+                        <h3 class="mdl-cell mdl-cell--12-col mdl-typography--headline" id="carto">Cartographie</h3>
+                        <!-- <div class="mdl-cell mdl-cell--6-col">
+                            <img class="article-image" src=" images/portfolio-example-05.jpg" border="0" alt="">
+                        </div>
+                        <div class="mdl-cell mdl-cell--6-col">
+                            <img class="article-image" src=" images/portfolio-example-06.jpg" border="0" alt="">
+                        </div> -->
+                        <div class="mdl-cell mdl-cell--12-col mdl-card__supporting-text no-padding ">
+                            <p>
+                                &nbsp; &nbsp; Tout d'abord, il y a deux classes d 'objets à localiser (coordonnées GPS) : les points d 'eau  et les services du quotidien. Les premiers sont assez simples à mettre sur la carte, il fallait tout simplement les trouver sur la carte, en examinant chaque section du cadastre Berney et y mettre un point qui contient les informations à propos de sa classe (point d'eau public ou enclavé, nous avons considéré que les points d'eau enclavés étaient privés) et sa catégorie (réservoir, fontaine, piscine, etc.).
+                            </p>
+                            <p>
+                                &nbsp; &nbsp; Localiser les services du quotidien s'est avéré plus délicat. Tout d'abord, nous avons océrisé l'Almanach de commerce Vaudois en entier, pour traiter son contenu numériquement, soit la liste des commerçants et leur adresse. Mais à cause de la qualité de l'océrisation ainsi que celle du document original, il nous a fallu corriger beaucoup d'erreurs - telles que des fautes d'orthographe, de lecture de symboles ou des espaces inutiles - pour chaque ligne de l'Almanach, à la main.
+                            </p>
+                            <p>
+                                &nbsp; &nbsp; À la fin de cette tâche, nous avons pu enfin structurer les données en format lisible et utile par l'ordinateur, en créant un fichier CSV avec les adresses de chaque métier. Est venu alors le défi d'associer les adresses de l'époque avec leurs coordonnées GPS, ce qui n'est pas si facile puisque les registres qui relient les adresses aux coordonnées GPS sont basés sur les adresses actuelles, qui ont changé depuis l'époque de l'Almanach. Nous avons donc pris un registre permettant d'associer chaque adresse d'époque avec leur numérotation actuelle ainsi que ses coordonnées GPS, il suffisait alors de relier les adresses de l'Almanach avec celles de ce registre, ce qui n'est pas "automatique" parce qu'il y a aussi des variations d'orthographe des noms de rue / des erreurs dans l'Almanach. L'affectation a donc été faite par similarité graphique. Un seuil de similarité a été établi (75 %) en dessous duquel il a fallu vérifier l'adresse à la main et trouver ses coordonnées GPS. Enfin, une fois que chaque adresse a été localisée, nous avons 
+                                créé une couche vectorielle de points selon le métier qui se trouve à cet emplacement.
+                            </p>
+                        </div>
+                        <h4 class="mdl-cell mdl-cell--12-col mdl-typography--body-1-force-preferred-font">Catégorisation des métiers</h4>
+                        <div class="mdl-cell mdl-cell--12-col mdl-card__supporting-text no-padding ">
+                            <p>
+                                &nbsp; &nbsp; Nous avons fait une catégorisation des métiers selon 7 catégories - Alimentation quotidienne, alimentation pas quotidienne, Éducation, Artisanat, Textile, Services quotidiens, Autres. Pour faciliter la catégorisation, nous avons écrit un script en Python pour passer en revue la liste des métiers et permettait de les catégoriser un à un. Pour faciliter un peu la tâche, le programme propose une heuristique de la catégorie du métier, en se basant sur les métiers déjà catégorisés et une analyse de proximité sémantique avec spaCy. Une fois cette catégorisation faite, il est devenu possible d'avoir les localisations des corps de métiers selon les séparations qui nous intéressent ici.
+                            </p>
+                            <p>
+                                &nbsp; &nbsp; Par ailleurs, nous nous sommes rendu compte qu'il manquait un élément important dans la catégorie alimentation quotidienne, qui n'était pas présent dans l'Almanach de commerce : le marché ! Il a donc été intégré à la main dans la couche correspondante pour nos cartes.
+                            </p>
+                        </div>
+                        <h4 class="mdl-cell mdl-cell--12-col mdl-typography--body-1-force-preferred-font">Analyse du réseau routier</h4>
+                        <div class="mdl-cell mdl-cell--12-col mdl-card__supporting-text no-padding ">
+                            <p>
+                                &nbsp; &nbsp; Pour mener l'analyse du réseau routier, nous avons créé une couche vectorielle comprenant toutes les routes de l'époque du cadastre Berney. Ensuite, nous avons sous-divisé ce réseau en tranches de 10 mètres chacune. Pour chacune de ces tranches, nous avons calculé la pente moyenne en utilisant un modèle numérique d'élévation (DEM), sourcé de Swisstopo, rééchantillonné à une résolution de 7,5 mètres. Selon la formule Tobler modifiée ci-dessous, 
+nous avons pu calculer la vitesse de marche W indépendamment de la direction de marche (soit en montée, soit en descente) : W=5exp(-3.5abs(x)) ; où x est la pente (en degrés) et W est la vitesse de marche (km/h). Enfin, pour chaque service ou groupe de services, nous avons fait une analyse de réseau routier avec l'algorithme « Isochrone raster » de QNEAT3 pour montrer la distance au service le plus proche, et la densité des services, c'est-à-dire le nombre des services dans un rayon spécifié.
+                            </p>
+                        </div>
+
+                        <h3 class="mdl-cell mdl-cell--12-col mdl-typography--headline" id="team">L'Équipe</h3>
                         <div class="mdl-cell mdl-cell--6-col">
                             <img class="article-image" src=" images/portfolio-example-05.jpg" border="0" alt="">
                         </div>
                         <div class="mdl-cell mdl-cell--6-col">
                             <img class="article-image" src=" images/portfolio-example-06.jpg" border="0" alt="">
                         </div>
-                        <div class="mdl-cell mdl-cell--8-col mdl-card__supporting-text no-padding ">
+                        <div class="mdl-cell mdl-cell--12-col mdl-card__supporting-text no-padding ">
                             <p>
-                                Excepteur reprehenderit sint exercitation ipsum consequat qui sit id velit elit. Velit anim eiusmod labore sit amet. Voluptate voluptate irure occaecat deserunt incididunt esse in. Sunt velit aliquip sunt elit ex nulla reprehenderit qui ut eiusmod ipsum do. Duis veniam reprehenderit laborum occaecat id proident nulla veniam. Duis enim deserunt voluptate aute veniam sint pariatur exercitation. Irure mollit est sit labore est deserunt pariatur duis aute laboris cupidatat. Consectetur consequat esse est sit veniam adipisicing ipsum enim irure.
+                                &nbsp; &nbsp; Nous sommes un groupe de quatre étudiants en master à l'EPFL, suivant des formations très différentes : deux étudiants en Génie Civil, un étudiant en Informatique et un étudiant en Sciences et Ingénierie de l'Environnement. Nous avons tous un réel intérêt pour l'accessibilité, les inégalités sociales, la durabilité des systèmes urbains et la visualisation des données. Avec ces intérêts, ainsi que nos compétences en informatique, traitement des données et analyse des systèmes urbains, nous avons pu mener à bien ce projet, ce qui nous a permis de renforcer ces compétences tout en découvrant une part de l'histoire de Lausanne.
                             </p>
                         </div>
                     </div>
