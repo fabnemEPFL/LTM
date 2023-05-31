@@ -1010,6 +1010,9 @@ function setMap() {
                             <p>
                                 &nbsp; &nbsp; Tout d'abord, il y a deux classes d 'objets à localiser (coordonnées GPS) : les points d 'eau  et les services du quotidien. Les premiers sont assez simples à mettre sur la carte, il fallait tout simplement les trouver sur la carte, en examinant chaque section du cadastre Berney et y mettre un point qui contient les informations à propos de sa classe (point d'eau public ou enclavé, nous avons considéré que les points d'eau enclavés étaient privés) et sa catégorie (réservoir, fontaine, piscine, etc.).
                             </p>
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <img class="article-image" src="images/EauxBande.png" border="0" alt="">
+                            </div>
                             <p>
                                 &nbsp; &nbsp; Localiser les services du quotidien s'est avéré plus délicat. Tout d'abord, nous avons océrisé l'Almanach de commerce Vaudois en entier, pour traiter son contenu numériquement, soit la liste des commerçants et leur adresse. Mais à cause de la qualité de l'océrisation ainsi que celle du document original, il nous a fallu corriger beaucoup d'erreurs - telles que des fautes d'orthographe, de lecture de symboles ou des espaces inutiles - pour chaque ligne de l'Almanach, à la main.
                             </p>
@@ -1023,6 +1026,9 @@ function setMap() {
                             <p>
                                 &nbsp; &nbsp; Nous avons fait une catégorisation des métiers selon 7 catégories - Alimentation quotidienne, alimentation pas quotidienne, Éducation, Artisanat, Textile, Services quotidiens, Autres. Pour faciliter la catégorisation, nous avons écrit un script en Python pour passer en revue la liste des métiers et permettait de les catégoriser un à un. Pour faciliter un peu la tâche, le programme propose une heuristique de la catégorie du métier, en se basant sur les métiers déjà catégorisés et une analyse de proximité sémantique avec spaCy. Une fois cette catégorisation faite, il est devenu possible d'avoir les localisations des corps de métiers selon les séparations qui nous intéressent ici.
                             </p>
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <img class="article-image" src="images/bande_categ.png" border="0" alt="">
+                            </div>
                             <p>
                                 &nbsp; &nbsp; Par ailleurs, nous nous sommes rendu compte qu'il manquait un élément important dans la catégorie alimentation quotidienne, qui n'était pas présent dans l'Almanach de commerce : le marché ! Il a donc été intégré à la main dans la couche correspondante pour nos cartes.
                             </p>
