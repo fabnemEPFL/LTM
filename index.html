@@ -986,8 +986,6 @@ function setMap() {
                         <div class="mdl-cell mdl-cell--12-col">
                             <img class="article-image" src="images/Almanach_Source.png" border="0" alt="">
                         </div>
-
-                        <h4 class="mdl-cell mdl-cell--12-col mdl-typography--body-1-force-preferred-font">Logiciels pour traitement des données, données supplémentaires</h4>
                         <div class="mdl-cell mdl-cell--12-col mdl-card__supporting-text no-padding ">
                             <ul>
                                 <li>
@@ -1004,7 +1002,6 @@ function setMap() {
                                 &nbsp; &nbsp; Nous avons utilisé pour la plupart de cette analyse le logiciel QGIS, un logiciel open-source permettant de travailler sur des cartes, notamment pour nous le Cadastre Berney. Surtout pour les analyses de réseau routier, QGIS a une fonctionnalité pratique, avec le plugin “QNEAT3” pour effectuer notre analyse de "marchabilité". Les algorithmes dits “isochrones” nous permettent de calculer la "marchabilité" y compris hors des routes, en interpolant, ainsi que de générer les couches rasters qui interprètent un champ pour accommoder pour les différentes vitesses de marche. 
                             </p>
                         </div>
-                        <h4 class="mdl-cell mdl-cell--12-col mdl-typography--body-1-force-preferred-font">Logiciels pour traitement des données, données supplémentaires</h4>
                         <div class="mdl-cell mdl-cell--12-col mdl-card__supporting-text no-padding ">
                             <p>
                                 &nbsp; &nbsp; Notre travail s'est fait en trois parties principales, détaillées dans les sections suivantes. La première consiste à transformer l 'Almanach en un format utilisable pour traitement numérique, afin d'extraire ses informations et les utiliser pour nos cartes. La deuxième partie consiste à classer tous les métiers de l 'Almanach dans des groupes de métiers similaires. Enfin, la dernière partie consiste à effectuer une analyse du réseau routier dans le but de calculer la "marchabilité" pour chaque catégorie de métiers ainsi que des points d 'eau.
@@ -1031,6 +1028,7 @@ function setMap() {
                             <div class="mdl-cell mdl-cell--12-col">
                                 <img class="article-image" src="images/Methodo-Georef.png" border="0" alt="">
                             </div>
+                            <h4 class="mdl-cell mdl-cell--12-col mdl-typography--body-1-force-preferred-font" style="font-family: bold;">Logiciels pour traitement des données, données supplémentaires</h4>
                             <p>
                                 &nbsp; &nbsp; À la fin de cette tâche, nous avons pu enfin structurer les données en format lisible et utile par l'ordinateur, en créant un fichier CSV avec les adresses de chaque métier. Est venu alors le défi d'associer les adresses de l'époque avec leurs coordonnées GPS, ce qui n'est pas si facile puisque les registres qui relient les adresses aux coordonnées GPS sont basés sur les adresses actuelles, qui ont changé depuis l'époque de l'Almanach. Nous avons donc pris un registre permettant d'associer chaque adresse d'époque avec leur numérotation actuelle ainsi que ses coordonnées GPS, il suffisait alors de relier les adresses de l'Almanach avec celles de ce registre, ce qui n'est pas "automatique" parce qu'il y a aussi des variations d'orthographe des noms de rue / des erreurs dans l'Almanach. L'affectation a donc été faite par similarité graphique. Un seuil de similarité a été établi (75 %) en dessous duquel il a fallu vérifier l'adresse à la main et trouver ses coordonnées GPS. Enfin, une fois que chaque adresse a été localisée, nous avons 
                                 créé une couche vectorielle de points selon le métier qui se trouve à cet emplacement.
